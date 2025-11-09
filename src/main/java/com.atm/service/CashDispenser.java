@@ -4,16 +4,15 @@ import com.atm.strategy.DispenseStrategy;
 import java.util.Map;
 
 public class CashDispenser {
+
     private final DispenseStrategy strategy;
 
+    // Inject the strategy (SOLID: Dependency Inversion)
     public CashDispenser(DispenseStrategy strategy) {
         this.strategy = strategy;
     }
 
-    public void dispense(double amount) {
-        Map<Integer, Integer> notes = strategy.dispense(amount);
-        System.out.println("Dispensing:");
-        notes.forEach((denomination, count) ->
-                System.out.println(count + " x " + denomination));
+    public Map<Integer, Integer> dispense(int amount) {
+        return strategy.dispense(amount);
     }
 }

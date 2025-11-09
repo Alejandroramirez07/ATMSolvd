@@ -1,25 +1,18 @@
 package com.atm.ui;
 
-import com.atm.model.Account;
-import com.atm.repository.InMemoryAccountRepository;
-import com.atm.service.AuthService;
+import com.atm.service.ATMService;
 import com.atm.service.CashDispenser;
 import com.atm.strategy.GreedyDispenseStrategy;
 
-import java.util.Scanner;
-
 public class ATMConsole {
-    private final AuthService authService;
+    private final ATMService authService;
     private final CashDispenser dispenser;
-    private Account currentAccount;
-    private final Scanner scanner = new Scanner(System.in);
 
     public ATMConsole() {
-        var repository = new InMemoryAccountRepository();
-        this.authService = new AuthService(repository);
-        this.dispenser = new CashDispenser(new GreedyDispenseStrategy());
+        var repository = new InMemoryAccountRepository(); // or MyBatis repository
+        this.authService = new ATMService(repository);
+        this.dispenser = new CashDispenser(new GreedyDispenseStrategy()); // ✅ Works now
     }
-
     public void start() {
         System.out.println("=== Welcome to the ATM ===");
         System.out.print("Insert card (enter account number): ");
@@ -63,7 +56,7 @@ public class ATMConsole {
         double amount = scanner.nextDouble();
 
         if (currentAccount.withdraw(amount)) {
-            dispenser.dispense(amount);
+            dispenser.dispense((int) amount);
             System.out.println("New balance: $" + currentAccount.getBalance());
         } else {
             System.out.println("Insufficient funds!");
