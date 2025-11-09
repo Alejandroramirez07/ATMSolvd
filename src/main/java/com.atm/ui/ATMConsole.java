@@ -1,27 +1,32 @@
 package com.atm.ui;
 
+import com.atm.model.Account;
 import com.atm.service.ATMService;
 import com.atm.service.CashDispenser;
 import com.atm.strategy.GreedyDispenseStrategy;
 
+import java.util.Scanner;
+
 public class ATMConsole {
-    private final ATMService authService;
-    private final CashDispenser dispenser;
+
+    private final ATMService atmService;
+    private final Scanner scanner;
+    private Account currentAccount;
 
     public ATMConsole() {
-        var repository = new InMemoryAccountRepository(); // or MyBatis repository
-        this.authService = new ATMService(repository);
-        this.dispenser = new CashDispenser(new GreedyDispenseStrategy()); // ✅ Works now
+        this.scanner = new Scanner(System.in);
+        this.atmService = new ATMService(new CashDispenser(new GreedyDispenseStrategy()));
     }
+
     public void start() {
         System.out.println("=== Welcome to the ATM ===");
         System.out.print("Insert card (enter account number): ");
-        String accNum = scanner.nextLine();
+        String accountNumber = scanner.nextLine();
 
         System.out.print("Enter PIN: ");
         String pin = scanner.nextLine();
 
-        currentAccount = authService.authenticate(accNum, pin);
+        currentAccount = atmService.authenticate(accountNumber, pin);
         if (currentAccount == null) {
             System.out.println("Invalid credentials. Exiting...");
             return;
@@ -32,41 +37,35 @@ public class ATMConsole {
 
     private void showMenu() {
         while (true) {
-            System.out.println("\n--- Menu ---");
+            System.out.println("\n=== ATM Menu ===");
             System.out.println("1. View Balance");
-            System.out.println("2. Withdraw Cash");
-            System.out.println("3. Deposit Cash");
+            System.out.println("2. Deposit Cash");
+            System.out.println("3. Withdraw Cash");
             System.out.println("4. Exit");
-            System.out.print("Select: ");
+            System.out.print("Choose option: ");
 
-            int option = scanner.nextInt();
+            String choice = scanner.nextLine();
 
-            switch (option) {
-                case 1 -> System.out.println("Balance: $" + currentAccount.getBalance());
-                case 2 -> withdraw();
-                case 3 -> deposit();
-                case 4 -> { System.out.println("Goodbye!"); return; }
-                default -> System.out.println("Invalid option");
+            switch (choice) {
+                case "1":
+                    atmService.viewBalance(currentAccount);
+                    break;
+                case "2":
+                    System.out.print("Enter deposit amount: ");
+                    double depositAmount = Double.parseDouble(scanner.nextLine());
+                    atmService.deposit(currentAccount, depositAmount);
+                    break;
+                case "3":
+                    System.out.print("Enter withdrawal amount: ");
+                    int withdrawAmount = Integer.parseInt(scanner.nextLine());
+                    atmService.withdraw(currentAccount, withdrawAmount);
+                    break;
+                case "4":
+                    System.out.println("Thank you for using our ATM!");
+                    return;
+                default:
+                    System.out.println("Invalid option. Try again.");
             }
         }
-    }
-
-    private void withdraw() {
-        System.out.print("Enter amount to withdraw: ");
-        double amount = scanner.nextDouble();
-
-        if (currentAccount.withdraw(amount)) {
-            dispenser.dispense((int) amount);
-            System.out.println("New balance: $" + currentAccount.getBalance());
-        } else {
-            System.out.println("Insufficient funds!");
-        }
-    }
-
-    private void deposit() {
-        System.out.print("Enter amount to deposit: ");
-        double amount = scanner.nextDouble();
-        currentAccount.deposit(amount);
-        System.out.println("New balance: $" + currentAccount.getBalance());
     }
 }

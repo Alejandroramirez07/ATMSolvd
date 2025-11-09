@@ -2,6 +2,7 @@ package com.atm.service;
 
 import com.atm.model.Account;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class ATMService {
@@ -9,9 +10,13 @@ public class ATMService {
     private final AccountService accountService;
     private final CashDispenser cashDispenser;
 
-    public ATMService() {
+    public ATMService(CashDispenser cashDispenser) {
         this.accountService = new AccountService();
-        this.cashDispenser = new CashDispenser();
+        this.cashDispenser = cashDispenser;
+    }
+
+    public Account authenticate(String accountNumber, String pin) {
+        return accountService.authenticate(Integer.parseInt(accountNumber), pin);
     }
 
     public void viewBalance(Account acc) {
@@ -33,12 +38,10 @@ public class ATMService {
             System.out.println("Invalid withdrawal amount.");
             return;
         }
-
         if (acc.getBalance() < amount) {
             System.out.println("Insufficient balance.");
             return;
         }
-
         try {
             Map<Integer, Integer> notes = cashDispenser.dispense(amount);
             acc.setBalance(acc.getBalance() - amount);
