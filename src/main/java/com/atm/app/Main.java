@@ -2,7 +2,6 @@ package com.atm.app;
 
 import com.atm.model.Account;
 import com.atm.service.ATMService;
-import com.atm.service.AccountService;
 import com.atm.service.CashDispenser;
 import com.atm.strategy.GreedyDispenseStrategy;
 

@@ -2,7 +2,6 @@ package com.atm.service;
 
 import com.atm.model.Account;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class ATMService {
