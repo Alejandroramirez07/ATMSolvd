@@ -1,13 +1,17 @@
 package com.atm.ui;
 
+import com.atm.app.Main;
 import com.atm.model.Account;
 import com.atm.service.ATMService;
 import com.atm.service.CashDispenser;
 import com.atm.strategy.GreedyDispenseStrategy;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.Logger;
 
 import java.util.Scanner;
 
 public class ATMConsole {
+    private static final Logger LOGGER = (Logger) LogManager.getLogger(ATMConsole.class);
 
     private final ATMService atmService;
     private final Scanner scanner;
@@ -19,7 +23,7 @@ public class ATMConsole {
     }
 
     public void start() {
-        System.out.println("=== Welcome to the ATM ===");
+        LOGGER.info("=== Welcome to the ATM ===");
         System.out.print("Insert card (enter account number): ");
         String accountNumber = scanner.nextLine();
 
@@ -28,7 +32,7 @@ public class ATMConsole {
 
         currentAccount = atmService.authenticate(accountNumber, pin);
         if (currentAccount == null) {
-            System.out.println("Invalid credentials. Exiting...");
+            LOGGER.info("Invalid credentials. Exiting...");
             return;
         }
 
@@ -37,11 +41,11 @@ public class ATMConsole {
 
     private void showMenu() {
         while (true) {
-            System.out.println("\n=== ATM Menu ===");
-            System.out.println("1. View Balance");
-            System.out.println("2. Deposit Cash");
-            System.out.println("3. Withdraw Cash");
-            System.out.println("4. Exit");
+            LOGGER.info("\n=== ATM Menu ===");
+            LOGGER.info("1. View Balance");
+            LOGGER.info("2. Deposit Cash");
+            LOGGER.info("3. Withdraw Cash");
+            LOGGER.info("4. Exit");
             System.out.print("Choose option: ");
 
             String choice = scanner.nextLine();
@@ -61,10 +65,10 @@ public class ATMConsole {
                     atmService.withdraw(currentAccount, withdrawAmount);
                     break;
                 case "4":
-                    System.out.println("Thank you for using our ATM!");
+                    LOGGER.info("Thank you for using our ATM!");
                     return;
                 default:
-                    System.out.println("Invalid option. Try again.");
+                    LOGGER.info("Invalid option. Try again.");
             }
         }
     }
