@@ -1,10 +1,15 @@
 package com.atm.service;
 
+import com.atm.app.Main;
+import com.atm.dao.AccountDAO;
 import com.atm.model.Account;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.Logger;
 
 import java.util.Map;
 
 public class ATMService {
+    private static final Logger LOGGER = (Logger) LogManager.getLogger(ATMService.class);
 
     private final AccountService accountService;
     private final CashDispenser cashDispenser;
@@ -14,43 +19,48 @@ public class ATMService {
         this.cashDispenser = cashDispenser;
     }
 
+    public ATMService(AccountDAO accountDAO, CashDispenser cashDispenser) {
+        this.accountService = new AccountService(accountDAO);
+        this.cashDispenser = cashDispenser;
+    }
+
     public Account authenticate(String accountNumber, String pin) {
         return accountService.authenticate(Integer.parseInt(accountNumber), pin);
     }
 
     public void viewBalance(Account acc) {
-        System.out.println("Your current balance is: $" + acc.getBalance());
+        LOGGER.info("Your current balance is: $" + acc.getBalance());
     }
 
     public void deposit(Account acc, double amount) {
         if (amount <= 0) {
-            System.out.println("Invalid deposit amount.");
+            LOGGER.info("Invalid deposit amount.");
             return;
         }
         acc.setBalance(acc.getBalance() + amount);
         accountService.updateBalance(acc, acc.getBalance());
-        System.out.println("Successfully deposited $" + amount);
+        LOGGER.info("Successfully deposited $" + amount);
     }
 
     public void withdraw(Account acc, int amount) {
         if (amount <= 0) {
-            System.out.println("Invalid withdrawal amount.");
+            LOGGER.info("Invalid withdrawal amount.");
             return;
         }
         if (acc.getBalance() < amount) {
-            System.out.println("Insufficient balance.");
+            LOGGER.info("Insufficient balance.");
             return;
         }
         try {
             Map<Integer, Integer> notes = cashDispenser.dispense(amount);
             acc.setBalance(acc.getBalance() - amount);
             accountService.updateBalance(acc, acc.getBalance());
-            System.out.println("Please collect your cash:");
+            LOGGER.info("Please collect your cash:");
             notes.forEach((denom, count) ->
-                    System.out.println(count + " x $" + denom)
+                    LOGGER.info(count + " x $" + denom)
             );
         } catch (IllegalArgumentException e) {
-            System.out.println("Error: " + e.getMessage());
+            LOGGER.info("Error: " + e.getMessage());
         }
     }
 }

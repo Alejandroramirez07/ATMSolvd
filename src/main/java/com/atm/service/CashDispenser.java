@@ -7,7 +7,6 @@ public class CashDispenser {
 
     private final DispenseStrategy strategy;
 
-    // Inject the strategy (SOLID: Dependency Inversion)
     public CashDispenser(DispenseStrategy strategy) {
         this.strategy = strategy;
     }
