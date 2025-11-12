@@ -26,3 +26,11 @@ Strategy Pattern for flexible cash dispensing algorithms.
 Factory Pattern for creating DAO instances dynamically.
 
 Project Structure
+
+Prerequisites
+
+-Java 17 or later
+-Maven 3.8+
+-MySQL Server 8.0+
+-MyBatis 3.5+
+-JavaFX SDK 21+
