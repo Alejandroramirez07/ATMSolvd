@@ -91,4 +91,17 @@ public class ATMFacade {
         }
         return scanner.nextDouble();
     }
+
+    public Account authenticate(String accNumber, String pin) {
+        return atmService.authenticate(accNumber, pin);
+    }
+
+    public void deposit(Account acc, double amount) {
+        atmService.deposit(acc, amount);
+    }
+
+    public void withdraw(Account acc, int amount) {
+        atmService.withdraw(acc, amount);
+    }
+
 }
