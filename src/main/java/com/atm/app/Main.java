@@ -14,7 +14,6 @@ public class Main {
         LOGGER.info("Test Accounts: 123456/1234 ($1500) | 987654/9999 ($500)");
         LOGGER.info("================================");
 
-        // 🧩 Only one line needed to start the entire app
         ATMFacade atm = new ATMFacade();
         atm.start();
     }
