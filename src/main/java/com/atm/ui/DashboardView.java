@@ -16,7 +16,6 @@ public class DashboardView {
 
         Label lblBalance = new Label("Balance: $" + account.getBalance());
 
-        // --- Deposit Section ---
         TextField txtDeposit = new TextField();
         txtDeposit.setPromptText("Deposit amount");
 
@@ -33,7 +32,6 @@ public class DashboardView {
             }
         });
 
-        // --- Withdraw Section ---
         TextField txtWithdraw = new TextField();
         txtWithdraw.setPromptText("Withdraw amount");
 
@@ -41,7 +39,7 @@ public class DashboardView {
         btnWithdraw.setOnAction(e -> {
             try {
                 int amount = Integer.parseInt(txtWithdraw.getText());
-                String result = facade.withdraw(account, amount);  // returns denomination breakdown
+                String result = facade.withdraw(account, amount);
                 lblBalance.setText("Balance: $" + account.getBalance());
                 showAlert(Alert.AlertType.INFORMATION, "Cash Dispensed", result);
                 txtWithdraw.clear();
@@ -50,7 +48,6 @@ public class DashboardView {
             }
         });
 
-        // --- Exit ---
         Button btnExit = new Button("Exit");
         btnExit.setOnAction(e -> stage.close());
 
