@@ -16,7 +16,6 @@ public class GreedyDispenserStrategyTest {
         assertEquals(1, result.get(50));
         assertEquals(3, result.get(10));
 
-        // Make sure total is correct
         int total = result.entrySet().stream()
                 .mapToInt(e -> e.getKey() * e.getValue())
                 .sum();
