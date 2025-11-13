@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class GreedyDispenseStrategy implements DispenseStrategy {
 
-    private static final int[] DENOMINATIONS = {1000, 500, 100, 50, 20, 10};
+    private static final int[] DENOMINATIONS = {1000, 500, 100, 50, 10};
 
     @Override
     public Map<Integer, Integer> dispense(int amount) {
