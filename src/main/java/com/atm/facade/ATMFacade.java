@@ -100,8 +100,8 @@ public class ATMFacade {
         atmService.deposit(acc, amount);
     }
 
-    public void withdraw(Account acc, int amount) {
-        atmService.withdraw(acc, amount);
+    public String withdraw(Account acc, int amount) {
+        return atmService.withdraw(acc, amount);
     }
 
 }

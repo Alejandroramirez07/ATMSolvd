@@ -42,25 +42,28 @@ public class ATMService {
         LOGGER.info("Successfully deposited $" + amount);
     }
 
-    public void withdraw(Account acc, int amount) {
+    public String withdraw(Account acc, int amount) {
         if (amount <= 0) {
-            LOGGER.info("Invalid withdrawal amount.");
-            return;
+            return "Invalid withdrawal amount.";
+
         }
         if (acc.getBalance() < amount) {
-            LOGGER.info("Insufficient balance.");
-            return;
+            return "Insufficient balance.";
         }
         try {
             Map<Integer, Integer> notes = cashDispenser.dispense(amount);
             acc.setBalance(acc.getBalance() - amount);
             accountService.updateBalance(acc, acc.getBalance());
-            LOGGER.info("Please collect your cash:");
+
+            StringBuilder sb = new StringBuilder("Please collect your cash:");
             notes.forEach((denom, count) ->
-                    LOGGER.info(count + " x $" + denom)
+                    sb.append(count).append(" x $").append(denom).append("\n")
             );
+
+            return sb.toString();
+
         } catch (IllegalArgumentException e) {
-            LOGGER.info("Error: " + e.getMessage());
+            return "Error: " + e.getMessage();
         }
     }
 }
