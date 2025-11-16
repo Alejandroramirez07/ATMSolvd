@@ -1,1 +1,22 @@
-SELECT * FROM atm_db.accounts;
+use inventory_db;
+
+DROP TABLE IF EXISTS users;
+
+CREATE TABLE users (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    firstName VARCHAR(100) NOT NULL,
+    lastName VARCHAR(100) NOT NULL,
+    passwordHash VARCHAR(255) NOT NULL,
+    role VARCHAR(20) NOT NULL,
+    isActive BOOLEAN DEFAULT TRUE,
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+ALTER TABLE users
+ADD COLUMN updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+
+INSERT INTO accounts (account_number, pin, balance)
+VALUES (111111, '1111', 1500.0),
+	   (654321, '6543', 10000.0),
+       (987654, '9999', 500.0);

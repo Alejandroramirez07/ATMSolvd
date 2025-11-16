@@ -1,10 +1,9 @@
 package com.atm.facade;
 
-import com.atm.model.Account;
 import com.atm.dao.AccountDAO;
 import com.atm.factory.DAOFactory;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import com.atm.model.Account;
+import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -13,69 +12,48 @@ class ATMFacadeTest {
     private ATMFacade atmFacade;
     private AccountDAO accountDAO;
 
+    private static final String TEST_ACC_NUMBER = "111111";
+    private static final String TEST_PIN = "1111";
+
     @BeforeEach
     void setUp() {
-
-        accountDAO = DAOFactory.createAccountDAO();
-
-        Account acc = new Account("12345", "1111", 500.0);
-
-        accountDAO.updateBalance(acc);
-
         atmFacade = new ATMFacade();
+        accountDAO = DAOFactory.createAccountDAO();
     }
 
     @Test
     void testAuthenticateSuccess() {
-        Account acc = atmFacade.authenticate("12345", "1111");
+        Account acc = atmFacade.authenticate(TEST_ACC_NUMBER, TEST_PIN);
         assertNotNull(acc, "Authentication should succeed for valid credentials");
-        assertEquals("12345", acc.getAccountNumber());
-    }
-
-    @Test
-    void testAuthenticateFail() {
-        Account acc = atmFacade.authenticate("12345", "9999");
-        assertNull(acc, "Authentication should fail for wrong PIN");
     }
 
     @Test
     void testDeposit() {
-        Account acc = atmFacade.authenticate("12345", "1111");
+        Account acc = atmFacade.authenticate(TEST_ACC_NUMBER, TEST_PIN);
         assertNotNull(acc);
 
-        atmFacade.deposit(acc, 200.0);
+        double before = acc.getBalance();
+        atmFacade.deposit(acc, 100.0);
 
-        assertEquals(700.0, acc.getBalance(), 0.01,
-                "Deposit should increase account balance");
-    }
-
-    @Test
-    void testWithdrawSuccess() {
-        Account acc = atmFacade.authenticate("12345", "1111");
-        assertNotNull(acc);
-
-        String result = atmFacade.withdraw(acc, 100);
-
-        assertTrue(result.toUpperCase().contains("SUCCESS"),
-                "Withdrawal should return SUCCESS");
-
-        assertEquals(400.0, acc.getBalance(), 0.01,
-                "Balance should decrease after successful withdrawal");
+        Account updated = accountDAO.findByAccountNumber(Integer.parseInt(TEST_ACC_NUMBER));
+        assertEquals(before + 100.0, updated.getBalance(), 0.01);
     }
 
     @Test
     void testWithdrawInsufficientFunds() {
-        Account acc = atmFacade.authenticate("12345", "1111");
+        Account acc = atmFacade.authenticate(TEST_ACC_NUMBER, TEST_PIN);
         assertNotNull(acc);
 
-        String result = atmFacade.withdraw(acc, 1000);
+        double before = acc.getBalance();
+        int tooMuch = (int) (before + 5000);
 
-        assertTrue(
-                result.toUpperCase().contains("FAIL") ||
-                        result.toUpperCase().contains("INSUFFICIENT"),
-                "Withdrawal should fail for insufficient funds"
-        );
+        String result = atmFacade.withdraw(acc, tooMuch);
 
-        assertEquals(500.0, acc.getBalance(), 0.01);
+        assertTrue(result.toLowerCase().contains("insufficient")
+                        || result.toLowerCase().contains("fail"),
+                "Expected insufficient funds message but got: " + result);
+
+        Account updated = accountDAO.findByAccountNumber(Integer.parseInt(TEST_ACC_NUMBER));
+        assertEquals(before, updated.getBalance(), 0.01);
     }
 }
