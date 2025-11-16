@@ -34,3 +34,6 @@ Prerequisites
 -MySQL Server 8.0+
 -MyBatis 3.5+
 -JavaFX SDK 21+
+
+To run: mvn javafx:run
+
