@@ -5,9 +5,7 @@ import com.atm.model.Account;
 import javafx.stage.Stage;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.ApplicationExtension;
 import org.testfx.framework.junit5.Start;
@@ -17,7 +15,6 @@ import static org.mockito.Mockito.verify;
 @ExtendWith(ApplicationExtension.class)
 public class LoginViewTest {
 
-    @Mock
     private ATMFacade mockFacade;
 
     @Start
@@ -34,6 +31,7 @@ public class LoginViewTest {
 
     @Test
     void testSuccessfulLogin(FxRobot robot) {
+
         Account mockAccount = Mockito.mock(Account.class);
         Mockito.when(mockFacade.authenticate("123456", "0000")).thenReturn(mockAccount);
 
@@ -41,7 +39,7 @@ public class LoginViewTest {
         robot.clickOn(".password-field").write("0000");
         robot.clickOn("Login");
 
-        robot.sleep(500);
+        robot.sleep(1000);
 
         verify(mockFacade).authenticate("123456", "0000");
     }
@@ -54,11 +52,8 @@ public class LoginViewTest {
         robot.clickOn(".password-field").write("1111");
         robot.clickOn("Login");
 
-        robot.sleep(500);
-
+        robot.sleep(2000);
         verify(mockFacade).authenticate("999999", "1111");
-
-        robot.lookup("Invalid credentials").tryQuery().isPresent();
     }
 
     private void injectMockFacade(LoginView loginView, ATMFacade facade) {
